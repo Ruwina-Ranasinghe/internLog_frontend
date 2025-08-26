@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Button, PasswordInput, TextInput, Anchor } from "@mantine/core";
+import {Button, TextInput, Input} from "@mantine/core";
 import logo from "../../../assets/logo1.png";
+import {Link, useNavigate} from "react-router-dom";
 
 const Register = () => {
     const [name, setName] = useState("");
@@ -8,12 +9,36 @@ const Register = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [role, setRole] = useState("");
+    const navigate = useNavigate();
 
+    const requirements = [
+        { re: /[0-9]/, label: "Includes number" },
+        { re: /[a-z]/, label: "Includes lowercase letter" },
+        { re: /[A-Z]/, label: "Includes uppercase letter" },
+        { re: /[$&+,:;=?@#|'<>.^*()%!-]/, label: "Includes special symbol" },
+    ];
+
+    const validatePassword = (pwd: string) => {
+        const meetsRequirements = requirements.every((req) => req.re.test(pwd));
+        const isLongEnough = pwd.length >= 6; // at least 6 characters
+        return meetsRequirements && isLongEnough;
+    };
+
+    const validateEmail = (email: string) => {
+        return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+    };
 
     const handleSubmit = async (e:any) => {
         e.preventDefault();
 
-        // Validate password match
+        if (!validateEmail(email)) {
+            return alert("Invalid email address");
+        }
+
+        if (!validatePassword(password)) {
+            return alert("Password must be at least 6 characters long and include uppercase, lowercase, number, and special character");
+        }
+
         if (password !== confirmPassword) {
             return alert("Passwords do not match");
         }
@@ -26,7 +51,7 @@ const Register = () => {
                     name,
                     email,
                     password,
-                    isAdmin: role === "Admin", // convert role to boolean
+                    isAdmin: role === "Admin",
                 }),
             });
 
@@ -37,8 +62,8 @@ const Register = () => {
             } else {
                 console.log("User registered:", data);
                 alert("Registration successful!");
-                // Redirect to login page
-                window.location.href = "/login";
+
+                navigate("/login");
             }
         } catch (err) {
             console.error(err);
@@ -114,8 +139,9 @@ const Register = () => {
                             Password
                         </label>
                         <div className="mt-2">
-                            <PasswordInput
+                            <Input
                                 id="password"
+                                type="password"
                                 required
                                 radius="md"
                                 placeholder="Your password"
@@ -135,8 +161,9 @@ const Register = () => {
                             Confirm Password
                         </label>
                         <div className="mt-2">
-                            <PasswordInput
+                            <Input
                                 id="confirmPassword"
+                                type="password"
                                 required
                                 radius="md"
                                 placeholder="Confirm your password"
@@ -192,9 +219,9 @@ const Register = () => {
                 {/* Sign In Link */}
                 <p className="mt-6 text-center text-sm text-gray-600">
                     Already have an account?{" "}
-                    <Anchor href="/login" className="font-semibold text-[#B453F5] hover:text-[#830999]">
+                    <Link to ="/login" className="font-semibold text-[#B453F5] hover:text-[#830999]">
                         Sign in
-                    </Anchor>
+                    </Link>
                 </p>
             </div>
         </div>

@@ -1,42 +1,61 @@
 import { useState } from "react";
-import { Button, PasswordInput, TextInput, Anchor } from "@mantine/core";
+import {Button, TextInput, Input} from "@mantine/core";
 import logo from "../../../assets/logo1.png";
+import {Link, useNavigate} from "react-router-dom";
+import axios from "axios";
 
 const Login =()=> {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Basic validation
+        if (!email || !password) {
+            return alert("Please fill in both email and password.");
+        }
+
+        // Email format validation
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(email)) {
+            return alert("Please enter a valid email address.");
+        }
+
+        // Password length check
+        if (password.length < 6) {
+            return alert("Password must be at least 6 characters long.");
+        }
+
         try {
-            const response = await fetch("http://localhost:5000/api/auth/login", {
-                method: "POST",
-                headers: {"Content-Type": "application/json",},
-                body: JSON.stringify({ email, password }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                // Save token and role in localStorage
-                localStorage.setItem("token", data.token);
-                localStorage.setItem("name", data.name);
-                localStorage.setItem("email", data.email);
-                localStorage.setItem("isAdmin", data.isAdmin);
-
-                // Redirect based on role
-                if (data.isAdmin) {
-                    window.location.href = "/admin-dashboard";
-                } else {
-                    window.location.href = "/user-dashboard";
+            const {data} = await axios.post("http://localhost:5000/api/auth/login",
+                { email, password },
+                {headers: { "Content-Type": "application/json" },
                 }
+            );
+
+            // Save token and role in localStorage
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("name", data.name);
+            localStorage.setItem("email", data.email);
+            localStorage.setItem("isAdmin", data.isAdmin);
+
+            // Redirect based on role
+            if (data.isAdmin) {
+                navigate("/admin-dashboard");
             } else {
-                alert(data.message || "Login failed");
+                navigate("/user-dashboard");
             }
-        } catch (error) {
-            console.error("Login error:", error);
-            alert("Something went wrong. Please try again later.");
+        } catch (error: any) {
+            if (error.response) {
+                // Server responded with error
+                alert(error.response.data.message || "Login failed");
+            } else {
+                // Network or other issue
+                console.error("Login error:", error);
+                alert("Something went wrong. Please try again later.");
+            }
         }
 
     };
@@ -80,19 +99,13 @@ const Login =()=> {
                     </div>
 
                     <div>
-                        <div className="flex items-center justify-between">
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                                Password
-                            </label>
-                            <div className="text-sm">
-                                <Anchor href="#" className="font-semibold text-[#B453F5] hover:text-[#830999]">
-                                    Forgot password?
-                                </Anchor>
-                            </div>
-                        </div>
+                        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                            Password
+                        </label>
                         <div className="mt-2">
-                            <PasswordInput
+                            <Input
                                 id="password"
+                                type="password"
                                 required
                                 radius="md"
                                 placeholder="••••••••"
@@ -106,6 +119,7 @@ const Login =()=> {
                         </div>
                     </div>
 
+
                     <Button
                         type="submit"
                         fullWidth
@@ -118,15 +132,12 @@ const Login =()=> {
 
                 <p className="mt-6 text-center text-sm text-gray-600">
                     Do not have an account yet?{" "}
-                    <a href="/register" className="font-semibold text-[#B453F5] hover:text-[#830999]">
+                    <Link to ="/register" className="font-semibold text-[#B453F5] hover:text-[#830999]">
                         Create account
-                    </a>
+                    </Link>
                 </p>
             </div>
         </div>
     );
 }
-
-    export default Login;
-
-
+export default Login;
