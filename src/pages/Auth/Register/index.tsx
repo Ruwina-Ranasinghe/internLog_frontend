@@ -1,98 +1,91 @@
-import { useState } from "react";
-import {Button, TextInput, Input} from "@mantine/core";
+import { Button, TextInput, Input } from "@mantine/core";
+import { useForm } from "@mantine/form";
 import logo from "../../../assets/logo1.png";
-import {Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [role, setRole] = useState("");
     const navigate = useNavigate();
 
-    const requirements = [
-        { re: /[0-9]/, label: "Includes number" },
-        { re: /[a-z]/, label: "Includes lowercase letter" },
-        { re: /[A-Z]/, label: "Includes uppercase letter" },
-        { re: /[$&+,:;=?@#|'<>.^*()%!-]/, label: "Includes special symbol" },
-    ];
+    const form = useForm({
+        initialValues: {
+            name: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            role: "",
+        },
 
-    const validatePassword = (pwd: string) => {
-        const meetsRequirements = requirements.every((req) => req.re.test(pwd));
-        const isLongEnough = pwd.length >= 6; // at least 6 characters
-        return meetsRequirements && isLongEnough;
-    };
+        validate: {
+            name: (value) => (value.trim().length < 2 ? "Name is too short" : null),
+            email: (value) =>
+                /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
+                    ? null
+                    : "Invalid email address",
+            password: (value) => {
+                const requirements = [
+                    { re: /[0-9]/, label: "number" },
+                    { re: /[a-z]/, label: "lowercase letter" },
+                    { re: /[A-Z]/, label: "uppercase letter" },
+                    { re: /[$&+,:;=?@#|'<>.^*()%!-]/, label: "special symbol" },
+                ];
+                if (value.length < 6) return "Password must be at least 6 characters";
+                for (const req of requirements) {
+                    if (!req.re.test(value)) return `Password must include ${req.label}`;
+                }
+                return null;
+            },
+            confirmPassword: (value, values) =>
+                value !== values.password ? "Passwords do not match" : null,
+            role: (value) => (!value ? "Please select a role" : null),
+        },
+    });
 
-    const validateEmail = (email: string) => {
-        return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
-    };
-
-    const handleSubmit = async (e:any) => {
-        e.preventDefault();
-
-        if (!validateEmail(email)) {
-            return alert("Invalid email address");
-        }
-
-        if (!validatePassword(password)) {
-            return alert("Password must be at least 6 characters long and include uppercase, lowercase, number, and special character");
-        }
-
-        if (password !== confirmPassword) {
-            return alert("Passwords do not match");
-        }
-
+    const handleSubmit = async (values: typeof form.values) => {
         try {
             const res = await fetch("http://localhost:5000/api/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    name,
-                    email,
-                    password,
-                    isAdmin: role === "Admin",
+                    name: values.name,
+                    email: values.email,
+                    password: values.password,
+                    isAdmin: values.role === "Admin",
                 }),
             });
 
             const data = await res.json();
 
             if (!res.ok) {
-                alert(data.message || "Registration failed");
+                form.setErrors({ email: data.message || "Registration failed" });
             } else {
                 console.log("User registered:", data);
-                alert("Registration successful!");
-
                 navigate("/login");
             }
         } catch (err) {
             console.error(err);
-            alert("Something went wrong. Please try again.");
+            form.setErrors({ email: "Something went wrong. Please try again." });
         }
     };
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-[#D3B5F8] px-4 sm:px-6 lg:px-8">
             <div className="bg-white shadow-sm rounded-md p-6 flex flex-col items-center w-full max-w-sm">
-
                 {/* Logo & Title */}
                 <div className="w-full text-center">
-                    <img
-                        alt="Your Company"
-                        src={logo}
-                        className="mx-auto h-10 w-auto"
-                    />
+                    <img alt="Your Company" src={logo} className="mx-auto h-10 w-auto" />
                     <h2 className="mt-6 text-2xl font-bold tracking-tight text-gray-800">
                         Create your account
                     </h2>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="mt-6 w-full space-y-4">
-
+                <form
+                    onSubmit={form.onSubmit((values) => handleSubmit(values))}
+                    className="mt-6 w-full space-y-4"
+                >
                     {/* Name */}
                     <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-gray-700">
                             Name
                         </label>
                         <div className="mt-2">
@@ -101,19 +94,23 @@ const Register = () => {
                                 required
                                 radius="md"
                                 placeholder="Your name"
-                                value={name}
-                                onChange={(e) => setName(e.currentTarget.value)}
+                                error={form.errors.name}
                                 classNames={{
-                                    input:
-                                        "block w-full rounded-md bg-white border border-gray-300 px-3 py-2 text-base text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B453F5] sm:text-sm",
+                                    input: `block w-full rounded-md bg-white border px-3 py-2 text-base text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 sm:text-sm ${
+                                        form.errors.name
+                                            ? "border-red-500 focus:ring-red-500"
+                                            : "border-gray-300 focus:ring-[#B453F5]"
+                                    }`,
+                                    error: "text-red-500 text-xs mt-1", // <-- add this line
                                 }}
+                                {...form.getInputProps("name")}
                             />
                         </div>
                     </div>
 
                     {/* Email */}
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-gray-700">
                             Email
                         </label>
                         <div className="mt-2">
@@ -123,19 +120,24 @@ const Register = () => {
                                 required
                                 radius="md"
                                 placeholder="Your email address"
-                                value={email}
-                                onChange={(e) => setEmail(e.currentTarget.value)}
+                                error={form.errors.email} // Mantine shows error text
                                 classNames={{
-                                    input:
-                                        "block w-full rounded-md bg-white border border-gray-300 px-3 py-2 text-base text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B453F5] sm:text-sm",
+                                    input: `block w-full rounded-md bg-white border px-3 py-2 text-base text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 sm:text-sm ${
+                                        form.errors.email
+                                            ? "border-red-500 focus:ring-red-500"
+                                            : "border-gray-300 focus:ring-[#B453F5]"
+                                    }`,
+                                    error: "text-red-500 text-xs mt-1", // <-- add this line to style the error text
                                 }}
+                                {...form.getInputProps("email")}
                             />
                         </div>
                     </div>
 
+
                     {/* Password */}
                     <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-gray-700">
                             Password
                         </label>
                         <div className="mt-2">
@@ -145,19 +147,27 @@ const Register = () => {
                                 required
                                 radius="md"
                                 placeholder="Your password"
-                                value={password}
-                                onChange={(e) => setPassword(e.currentTarget.value)}
+                                error={form.errors.password}
                                 classNames={{
-                                    input:
-                                        "block w-full rounded-md bg-white border border-gray-300 px-3 py-2 text-base text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B453F5] sm:text-sm",
+                                    input: `block w-full rounded-md bg-white border px-3 py-2 text-base text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 sm:text-sm ${
+                                        form.errors.password
+                                            ? "border-red-500 focus:ring-red-500"
+                                            : "border-gray-300 focus:ring-[#B453F5]"
+                                    }`,
                                 }}
+                                {...form.getInputProps("password")}
                             />
                         </div>
+                        {form.errors.password && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {form.errors.password}
+                            </p>
+                        )}
                     </div>
 
                     {/* Confirm Password */}
                     <div>
-                        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-gray-700">
                             Confirm Password
                         </label>
                         <div className="mt-2">
@@ -167,14 +177,22 @@ const Register = () => {
                                 required
                                 radius="md"
                                 placeholder="Confirm your password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.currentTarget.value)}
+                                error={form.errors.confirmPassword}
                                 classNames={{
-                                    input:
-                                        "block w-full rounded-md bg-white border border-gray-300 px-3 py-2 text-base text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#B453F5] sm:text-sm",
+                                    input: `block w-full rounded-md bg-white border px-3 py-2 text-base text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 sm:text-sm ${
+                                        form.errors.confirmPassword
+                                            ? "border-red-500 focus:ring-red-500"
+                                            : "border-gray-300 focus:ring-[#B453F5]"
+                                    }`,
                                 }}
+                                {...form.getInputProps("confirmPassword")}
                             />
                         </div>
+                        {form.errors.confirmPassword && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {form.errors.confirmPassword}
+                            </p>
+                        )}
                     </div>
 
                     {/* Role Selection */}
@@ -185,8 +203,8 @@ const Register = () => {
                                     type="radio"
                                     name="role"
                                     value="User"
-                                    checked={role === "User"}
-                                    onChange={(e) => setRole(e.target.value)}
+                                    checked={form.values.role === "User"}
+                                    onChange={() => form.setFieldValue("role", "User")}
                                     className="text-[#B453F5] focus:ring-[#B453F5]"
                                 />
                                 <span className="text-sm text-gray-700">User</span>
@@ -196,13 +214,16 @@ const Register = () => {
                                     type="radio"
                                     name="role"
                                     value="Admin"
-                                    checked={role === "Admin"}
-                                    onChange={(e) => setRole(e.target.value)}
+                                    checked={form.values.role === "Admin"}
+                                    onChange={() => form.setFieldValue("role", "Admin")}
                                     className="text-[#B453F5] focus:ring-[#B453F5]"
                                 />
                                 <span className="text-sm text-gray-700">Admin</span>
                             </label>
                         </div>
+                        {form.errors.role && (
+                            <p className="text-red-500 text-xs mt-1">{form.errors.role}</p>
+                        )}
                     </div>
 
                     {/* Submit Button */}
@@ -219,7 +240,10 @@ const Register = () => {
                 {/* Sign In Link */}
                 <p className="mt-6 text-center text-sm text-gray-600">
                     Already have an account?{" "}
-                    <Link to ="/login" className="font-semibold text-[#B453F5] hover:text-[#830999]">
+                    <Link
+                        to="/login"
+                        className="font-semibold text-[#B453F5] hover:text-[#830999]"
+                    >
                         Sign in
                     </Link>
                 </p>
