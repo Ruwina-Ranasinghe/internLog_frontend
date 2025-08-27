@@ -7,7 +7,7 @@ const CreateTaskForm = () => {
     const [formData, setFormData] = useState({
         task_name: '',
         description: '',
-        status: 'todo', // default status
+        status: 'todo',
         priority: 'Low',
         dueDate: '',
         attachments: [] as File[]
@@ -72,7 +72,7 @@ const CreateTaskForm = () => {
                 alert(data.message || 'Failed to create task');
             } else {
                 alert('Task created successfully!');
-                navigate('/user-dashboard');
+                navigate('/user/dashboard');
             }
         } catch (err) {
             console.error(err);

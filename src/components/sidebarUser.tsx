@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { IconUserCircle, IconMenu2, IconX } from '@tabler/icons-react';
 
 const UserSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [active, setActive] = useState('user-dashboard');
+  const [active, setActive] = useState('/user/dashboard');
   const [isOpen, setIsOpen] = useState(false);
 
   const name = localStorage.getItem("name");
@@ -62,31 +62,31 @@ const UserSidebar = () => {
         <div className="flex flex-col gap-2 mt-4">
           <button
             className={`w-full text-left px-3 py-2 rounded ${
-              active === '/user-dashboard'
+              active === '/user/dashboard'
                 ? 'bg-purple-800 text-white'
                 : 'bg-purple-300 text-purple-900'
             }`}
-            onClick={() => handleLinkClick('/user-dashboard')}
+            onClick={() => handleLinkClick('/user/dashboard')}
           >
             Dashboard
           </button>
           <button
             className={`w-full text-left px-3 py-2 rounded ${
-              active === '/create-task'
+              active === '/user/create-task'
                 ? 'bg-purple-800 text-white'
                 : 'bg-purple-300 text-purple-900'
             }`}
-            onClick={() => handleLinkClick('/create-task')}
+            onClick={() => handleLinkClick('/user/create-task')}
           >
             Add a Task
           </button>
           <button
             className={`w-full text-left px-3 py-2 rounded ${
-              active === '/view-all-tasks'
+              active === '/user/view-all-tasks'
                 ? 'bg-purple-800 text-white'
                 : 'bg-purple-300 text-purple-900'
             }`}
-            onClick={() => handleLinkClick('/view-all-tasks')}
+            onClick={() => handleLinkClick('/user/view-all-tasks')}
           >
             My Tasks
           </button>

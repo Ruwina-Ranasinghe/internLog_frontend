@@ -22,7 +22,7 @@ const EditTaskForm = () => {
   useEffect(() => {
     if (!task) {
       alert("No task data provided!");
-      navigate('/view-all-tasks');
+      navigate('/user/view-all-tasks');
       return;
     }
 
@@ -114,7 +114,7 @@ const EditTaskForm = () => {
         alert(data.message || "Failed to update task");
       } else {
         alert("Task updated successfully!");
-        navigate("/view-all-tasks");
+        navigate("/user/view-all-tasks");
       }
     } catch (err) {
       console.error(err);
@@ -145,7 +145,7 @@ const EditTaskForm = () => {
         alert(data.message || "Failed to delete task");
       } else {
         alert("Task deleted successfully!");
-        navigate('/view-all-tasks');
+        navigate('/user/view-all-tasks');
       }
     } catch (err) {
       console.error(err);

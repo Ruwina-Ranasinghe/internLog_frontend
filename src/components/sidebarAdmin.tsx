@@ -5,7 +5,7 @@ import { IconUserCircle, IconMenu2, IconX } from '@tabler/icons-react';
 const SidebarAdmin = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [active, setActive] = useState('dashboard');
+  const [active, setActive] = useState('/admin/dashboard');
   const [isOpen, setIsOpen] = useState(false);
 
   const name = localStorage.getItem("name");
@@ -61,21 +61,21 @@ const SidebarAdmin = () => {
         <div className="flex flex-col gap-2 mt-4">
           <button
             className={`w-full text-left px-3 py-2 rounded ${
-              active === '/admin-dashboard'
+              active === '/admin/dashboard'
                 ? 'bg-purple-800 text-white'
                 : 'bg-purple-300 text-purple-900'
             }`}
-            onClick={() => handleLinkClick('/admin-dashboard')}
+            onClick={() => handleLinkClick('/admin/dashboard')}
           >
             Dashboard
           </button>
           <button
             className={`w-full text-left px-3 py-2 rounded ${
-              active === '/user-log'
+              active === '/admin/user-log'
                 ? 'bg-purple-800 text-white'
                 : 'bg-purple-300 text-purple-900'
             }`}
-            onClick={() => handleLinkClick('/user-log')}
+            onClick={() => handleLinkClick('/admin/user-log')}
           >
             All User
           </button>

@@ -49,7 +49,7 @@ const TaskCard = () => {
   // }, [selectedTaskId, navigate]);
 
   const handleNavigateToEdit = (task: Task) => {
-    navigate(`/edit-task/${task._id}`, { state: { task } });
+    navigate(`/user/edit-task/${task._id}`, { state: { task } });
   };
 
 

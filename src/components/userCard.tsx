@@ -52,7 +52,7 @@ const UserCard = () => {
                     <p className="text-sm text-gray-600 mb-4 break-words">{user.email}</p>
 
                     <button
-                        onClick={() => navigate(`/tasks/user/${user._id}`)}
+                        onClick={() => navigate(`/admin/tasks/user/${user._id}`)}
                         className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700 transition-colors w-full"
                     >
                         View Tasks
