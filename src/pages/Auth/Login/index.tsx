@@ -3,6 +3,7 @@ import { Button, TextInput } from "@mantine/core";
 import logo from "../../../assets/logo1.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import axiosInstance from "../../../interceptors/axiosInterceptor.ts";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -24,8 +25,8 @@ const Login = () => {
 
     const handleSubmit = async (values: typeof form.values) => {
         try {
-            const { data } = await axios.post(
-                "http://localhost:5000/api/auth/login",
+            const { data } = await axiosInstance.post(
+                "/auth/login",
                 { email: values.email, password: values.password },
                 { headers: { "Content-Type": "application/json" } }
             );

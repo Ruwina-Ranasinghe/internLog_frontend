@@ -2,6 +2,7 @@ import { Button, TextInput, Input } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import logo from "../../../assets/logo1.png";
 import { Link, useNavigate } from "react-router-dom";
+import axiosInstance from "../../../interceptors/axiosInterceptor.ts";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -42,35 +43,26 @@ const Register = () => {
 
     const handleSubmit = async (values: typeof form.values) => {
         try {
-            const res = await fetch("http://localhost:5000/api/auth/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
+            const res = await axiosInstance.post("/auth/register", {
                     name: values.name,
                     email: values.email,
                     password: values.password,
                     isAdmin: values.role === "Admin",
-                }),
-            });
+                });
 
-            const data = await res.json();
+            console.log("User registered:", res.data);
+            navigate("/login");
 
-            if (!res.ok) {
-                form.setErrors({ email: data.message || "Registration failed" });
-            } else {
-                console.log("User registered:", data);
-                navigate("/login");
-            }
         } catch (err) {
             console.error(err);
-            form.setErrors({ email: "Something went wrong. Please try again." });
+            alert("Something went wrong. Please try again.");
         }
     };
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-[#D3B5F8] px-4 sm:px-6 lg:px-8">
             <div className="bg-white shadow-sm rounded-md p-6 flex flex-col items-center w-full max-w-sm">
-                {/* Logo & Title */}
+
                 <div className="w-full text-center">
                     <img alt="Your Company" src={logo} className="mx-auto h-10 w-auto" />
                     <h2 className="mt-6 text-2xl font-bold tracking-tight text-gray-800">
@@ -78,12 +70,12 @@ const Register = () => {
                     </h2>
                 </div>
 
-                {/* Form */}
+
                 <form
                     onSubmit={form.onSubmit((values) => handleSubmit(values))}
                     className="mt-6 w-full space-y-4"
                 >
-                    {/* Name */}
+
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
                             Name
@@ -108,7 +100,7 @@ const Register = () => {
                         </div>
                     </div>
 
-                    {/* Email */}
+
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
                             Email
@@ -135,7 +127,7 @@ const Register = () => {
                     </div>
 
 
-                    {/* Password */}
+
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
                             Password
@@ -195,7 +187,7 @@ const Register = () => {
                         )}
                     </div>
 
-                    {/* Role Selection */}
+
                     <div className="pt-2">
                         <div className="flex space-x-6 justify-center">
                             <label className="flex items-center space-x-2">
@@ -226,7 +218,7 @@ const Register = () => {
                         )}
                     </div>
 
-                    {/* Submit Button */}
+
                     <Button
                         type="submit"
                         fullWidth
@@ -237,7 +229,7 @@ const Register = () => {
                     </Button>
                 </form>
 
-                {/* Sign In Link */}
+
                 <p className="mt-6 text-center text-sm text-gray-600">
                     Already have an account?{" "}
                     <Link

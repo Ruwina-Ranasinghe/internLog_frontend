@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import axiosInstance from "../interceptors/axiosInterceptor.ts";
 
 interface Task {
   _id: string;
@@ -33,13 +34,7 @@ const UserTasks: React.FC = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(
-            `http://localhost:5000/api/tasks/user/${id}`,
-            {
-              headers: token ? { Authorization: `Bearer ${token}` } : {},
-            }
-        );
+        const response = await axiosInstance.get(`/tasks/user/${id}`);
         setTasks(response.data);
       } catch (error) {
         console.error("Error fetching tasks:", error);

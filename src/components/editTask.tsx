@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import axiosInstance from "../interceptors/axiosInterceptor.ts";
 
 const EditTaskForm = () => {
   const navigate = useNavigate();
@@ -16,7 +17,6 @@ const EditTaskForm = () => {
     attachments: [] as File[],
   });
 
-  // Existing attachments from backend
   const [existingAttachments, setExistingAttachments] = useState<string[]>([]);
 
   useEffect(() => {
@@ -82,9 +82,7 @@ const EditTaskForm = () => {
     }
 
     try {
-      const token = localStorage.getItem("token");
       const formPayload = new FormData();
-
       formPayload.append("task_name", formData.title);
       formPayload.append("description", formData.description);
       formPayload.append("status", formData.status);
@@ -97,28 +95,22 @@ const EditTaskForm = () => {
       // Append existing attachments as paths so server knows to keep them
       existingAttachments.forEach(path => formPayload.append("existingAttachments", path));
 
-      const res = await fetch(
-          `http://localhost:5000/api/tasks/update-task/${task._id}`,
+      const res = await axiosInstance.put(
+          `/tasks/update-task/${task._id}`,
+          formPayload,
           {
-            method: "PUT",
             headers: {
-              Authorization: token ? `Bearer ${token}` : "",
+              "Content-Type": "multipart/form-data",
             },
-            body: formPayload,
           }
       );
 
-      const data = await res.json();
+      alert("Task updated successfully!");
+      navigate("/user/view-all-tasks");
 
-      if (!res.ok) {
-        alert(data.message || "Failed to update task");
-      } else {
-        alert("Task updated successfully!");
-        navigate("/user/view-all-tasks");
-      }
-    } catch (err) {
+    } catch (err:any) {
       console.error(err);
-      alert("Something went wrong while updating the task.");
+      alert(err.response?.data?.message || "Failed to update task");
     }
   };
 
@@ -132,24 +124,12 @@ const EditTaskForm = () => {
     if (!confirmDelete) return;
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/tasks/delete-task/${task._id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: token ? `Bearer ${token}` : "",
-        },
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        alert(data.message || "Failed to delete task");
-      } else {
-        alert("Task deleted successfully!");
-        navigate('/user/view-all-tasks');
-      }
-    } catch (err) {
+      await axiosInstance.delete(`/tasks/delete-task/${task._id}`);
+      alert("Task deleted successfully!");
+      navigate("/user/view-all-tasks");
+    } catch (err:any) {
       console.error(err);
-      alert("Something went wrong while deleting the task.");
+      alert(err.response?.data?.message || "Failed to delete task");
     }
   };
 
