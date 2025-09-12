@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import BarChartComponent from "../../../components/barGraph.tsx";
 import AdminAnalysisGraph from "../../../components/adminAnalysisGraph.tsx";
+import axiosInstance from "../../../interceptors/axiosInterceptor.ts";
 
 const AdminDashboard = () => {
     const [completionRate, setCompletionRate] = useState(0);
@@ -18,61 +19,53 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         const fetchPriorityData = async () => {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("accessToken");
             if (!token) return alert("Please login first");
 
             try {
-                const res = await fetch("http://localhost:5000/api/tasks/priority-counts", {
+                const res = await axiosInstance.get("/tasks/priority-counts", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                const data = await res.json();
+                const data = res.data;
 
-                if (res.ok) {
                     setPriorityData([
                         { priority: "High", tasks: data.data.High || 0 },
                         { priority: "Medium", tasks: data.data.Medium || 0 },
                         { priority: "Low", tasks: data.data.Low || 0 },
                     ]);
-                } else {
-                    console.error("Priority API Error:", data.error);
-                }
-            } catch (err) {
-                console.error("Priority Fetch Error:", err);
+            } catch (err:any) {
+                console.error("Priority API Error:", err.response?.data || err.message);
             } finally {
                 setLoading(false);
             }
         };
 
         const fetchStatusData = async () => {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("accessToken");
             if (!token) return alert("Please login first");
 
             try {
-                const statusRes = await fetch("http://localhost:5000/api/tasks/all-users-status-counts", {
+                const res = await axiosInstance.get("/tasks/all-users-status-counts", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
-                const statusData = await statusRes.json();
+                const statusData = res.data; // axios parses JSON automatically
 
-                if (statusRes.ok) {
-                    const completed = statusData.data.completed || 0;
-                    const inProgress = statusData.data.inProgress || 0;
-                    const todo = statusData.data.todo || 0;
+                const completed = statusData.data.completed || 0;
+                const inProgress = statusData.data.inProgress || 0;
+                const todo = statusData.data.todo || 0;
 
-                    const total = completed + inProgress + todo;
-                    const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+                const total = completed + inProgress + todo;
+                const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-                    setStatusData([
-                        { name: "Completed", value: completed, color: "#22C55E" },
-                        { name: "In Progress", value: inProgress, color: "#EF4444" },
-                        { name: "Todo", value: todo, color: "#A855F7" },
-                    ]);
-                    setCompletionRate(rate);
-                } else {
-                    console.error("Status API Error:", statusData.error);
-                }
-            } catch (err) {
-                console.error("Status Fetch Error:", err);
+                setStatusData([
+                    { name: "Completed", value: completed, color: "#22C55E" },
+                    { name: "In Progress", value: inProgress, color: "#EF4444" },
+                    { name: "Todo", value: todo, color: "#A855F7" },
+                ]);
+                setCompletionRate(rate);
+            } catch (err: any) {
+                console.error("Status API Error:", err.response?.data || err.message);
             }
         };
 

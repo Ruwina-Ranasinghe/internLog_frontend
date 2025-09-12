@@ -4,6 +4,7 @@ import logo from "../../../assets/logo1.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import axiosInstance from "../../../interceptors/axiosInterceptor.ts";
+import {ACCESS_TOKEN, REFRESH_TOKEN} from "../../../constants/app.constant.ts";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -31,12 +32,17 @@ const Login = () => {
                 { headers: { "Content-Type": "application/json" } }
             );
 
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("name", data.name);
-            localStorage.setItem("email", data.email);
-            localStorage.setItem("isAdmin", data.isAdmin);
+            if (data.data.isAdmin) {alert("Admin logged successfully!");}
+            else {alert("User logged successfully!");}
 
-            if (data.isAdmin) navigate("/admin/dashboard");
+            localStorage.setItem(ACCESS_TOKEN, data.data.accessToken);
+            localStorage.setItem(REFRESH_TOKEN, data.data.refreshToken);
+
+            localStorage.setItem("name", data.data.name);
+            localStorage.setItem("email", data.data.email);
+            localStorage.setItem("isAdmin", String(data.data.isAdmin));
+
+            if (data.data.isAdmin) navigate("/admin/dashboard");
             else navigate("/user/dashboard");
         } catch (error: unknown) {
             if (axios.isAxiosError(error) && error.response) {
@@ -60,6 +66,7 @@ const Login = () => {
             }
         }
     };
+
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-[#D3B5F8] px-4 sm:px-6 lg:px-8">

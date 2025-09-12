@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { IconUserCircle } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../interceptors/axiosInterceptor.ts";
 
 interface User {
     _id: string;
@@ -13,14 +13,14 @@ const UserCard = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [activePage, setActivePage] = useState(1);
     const pageSize = 12;
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get(
-                    "http://localhost:5000/api/user/get-all-user",
+                const response = await axiosInstance.get(
+                    "/user/get-all-user",
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

@@ -12,11 +12,11 @@ import EditTask from "./pages/user/editTask";
 import AdminDashboard from "./pages/admin/adminDashboard";
 import AdminLog from "./pages/admin/adminLog";
 import UserLog from "./pages/admin/userLog";
-import { checkAuthLoader } from "./utils/checkAuthLoader";
 import App from "./App.tsx";
 import UserLayout from "./layouts/userLayout.tsx";
 import AdminLayout from "./layouts/adminLayout.tsx";
 import Home from "./pages/Home";
+import {checkAuthLoader} from "./utils/checkAuthLoader.tsx";
 
 
 const router = createBrowserRouter([

@@ -7,7 +7,7 @@ interface LoaderOptions {
 export const checkAuthLoader =
     ({ allowedRoles }: LoaderOptions = {}) =>
         async () => {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("accessToken");
             const isAdmin = localStorage.getItem("isAdmin");
 
             if (!token) {

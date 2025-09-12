@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from "../interceptors/axiosInterceptor.ts";
 
 const CreateTaskForm = () => {
 
@@ -43,7 +44,7 @@ const CreateTaskForm = () => {
     };
 
     const handleSubmit = async () => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('accessToken');
         if (!token) return alert('Please login first');
 
         try {
@@ -58,25 +59,24 @@ const CreateTaskForm = () => {
                 formPayload.append('attachments', file);
             });
 
-            const res = await fetch('http://localhost:5000/api/tasks/create-task', {
-                method: 'POST',
-                headers: {
+            const res = await axiosInstance.post('/tasks/create-task',
+                formPayload,
+                {
+                    headers: {
                     Authorization: `Bearer ${token}`
-                },
-                body: formPayload
-            });
+                    },
+                }
+            );
 
-            const data = await res.json();
-
-            if (!res.ok) {
-                alert(data.message || 'Failed to create task');
+            if (res.status !== 200) {
+                alert(res.data?.message || 'Failed to create task');
             } else {
                 alert('Task created successfully!');
                 navigate('/user/dashboard');
             }
-        } catch (err) {
+        } catch (err:any) {
             console.error(err);
-            alert('Something went wrong. Please try again.');
+            alert(err.response?.data?.message ||'Something went wrong. Please try again.');
         }
     };
 

@@ -50,7 +50,9 @@ const Register = () => {
                     isAdmin: values.role === "Admin",
                 });
 
-            console.log("User registered:", res.data);
+            if (values.role === "Admin") {alert("Admin registered successfully!");}
+            else {alert("User registered successfully!");}
+            
             navigate("/login");
 
         } catch (err) {
