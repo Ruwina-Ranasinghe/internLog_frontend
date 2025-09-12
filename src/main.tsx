@@ -16,6 +16,7 @@ import App from "./App.tsx";
 import UserLayout from "./layouts/userLayout.tsx";
 import AdminLayout from "./layouts/adminLayout.tsx";
 import Home from "./pages/Home";
+import {checkAuthLoader} from "./utils/checkAuthLoader.tsx";
 
 
 const router = createBrowserRouter([
@@ -31,7 +32,7 @@ const router = createBrowserRouter([
             {
                 path: "user",
                 element: <UserLayout />,
-                //loader: checkAuthLoader({ allowedRoles: ["user"] }),
+                loader: checkAuthLoader({ allowedRoles: ["user"] }),
                 children: [
                     { index: true, element: <Navigate to="dashboard" replace /> },
                     { path: "dashboard", element: <UserDashboard /> },
@@ -44,7 +45,7 @@ const router = createBrowserRouter([
             {
                 path: "admin",
                 element: <AdminLayout />,
-                //loader: checkAuthLoader({ allowedRoles: ["admin"] }),
+                loader: checkAuthLoader({ allowedRoles: ["admin"] }),
                 children: [
                     { index: true, element: <Navigate to="dashboard" replace /> },
                     { path: "dashboard", element: <AdminDashboard /> },
