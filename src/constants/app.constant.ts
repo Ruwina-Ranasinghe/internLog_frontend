@@ -1,3 +1,3 @@
-export const ACCESS_TOKEN = "ACCESS TOKEN";
+export const ACCESS_TOKEN = "accessToken";
 
-export const REFRESH_TOKEN = "REFRESH TOKEN"
+export const REFRESH_TOKEN = "refreshToken"

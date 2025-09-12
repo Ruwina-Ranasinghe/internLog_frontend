@@ -25,7 +25,8 @@ const UserSidebar = () => {
   };
 
   const handleLogout = () => {
-      localStorage.removeItem("token");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
       localStorage.removeItem("name");
       localStorage.removeItem("email");
       localStorage.removeItem("isAdmin");

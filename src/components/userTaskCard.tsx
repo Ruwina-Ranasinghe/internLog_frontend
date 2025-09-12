@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../interceptors/axiosInterceptor.ts";
 
 interface Task {
   _id: string;
@@ -16,42 +17,28 @@ const TaskCard = () => {
   // Fetch tasks on mount
   useEffect(() => {
     const fetchTasks = async () => {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("accessToken");
       if (!token) return alert("Please login first");
 
       try {
-        const res = await fetch("http://localhost:5000/api/tasks/get-tasks", {
+        const res = await axiosInstance("/tasks/get-tasks", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-
-        const data = await res.json();
-        if (!res.ok) {
-          alert(data.message || "Failed to fetch tasks");
-        } else {
-          setTasks(data);
-        }
-      } catch (err) {
+        setTasks(res.data);
+      } catch (err:any) {
         console.error(err);
-        alert("Something went wrong while fetching tasks.");
+        alert(err.response?.data?.message ||"Something went wrong while fetching tasks.");
       }
     };
 
     fetchTasks();
   }, []);
 
-  // Separate useEffect for navigation
-  // useEffect(() => {
-  //   if (selectedTaskId) {
-  //     navigate(`/edit-task/${selectedTaskId}`);
-  //   }
-  // }, [selectedTaskId, navigate]);
-
   const handleNavigateToEdit = (task: Task) => {
     navigate(`/user/edit-task/${task._id}`, { state: { task } });
   };
-
 
   const getStatusClass = (status: string) => {
     switch (status) {

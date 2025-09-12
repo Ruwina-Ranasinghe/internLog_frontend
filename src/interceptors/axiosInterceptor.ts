@@ -43,10 +43,10 @@ axiosInstance.interceptors.response.use(
             originalRequest._retry = true;
 
             const result = await refreshToken();
-            if (result?.accessToken) {
+            if (result?.accessToken && result?.refreshToken) {
 
                 localStorage.setItem(ACCESS_TOKEN, result.accessToken);
-                if (result.accessToken) localStorage.setItem(REFRESH_TOKEN, result.refreshToken);
+                localStorage.setItem(REFRESH_TOKEN, result.refreshToken);
 
                 originalRequest.headers["Authorization"] = `Bearer ${result.accessToken}`;
                 axios.defaults.headers.common["Authorization"] = `Bearer ${result.accessToken}`;
