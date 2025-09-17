@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import axiosInstance from "../../../interceptors/axiosInterceptor.ts";
 import {ACCESS_TOKEN, REFRESH_TOKEN} from "../../../constants/app.constant.ts";
+import {notifySuccess} from "../../../constants/notification.tsx";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -32,8 +33,11 @@ const Login = () => {
                 { headers: { "Content-Type": "application/json" } }
             );
 
-            if (data.data.isAdmin) {alert("Admin logged successfully!");}
-            else {alert("User logged successfully!");}
+            if (data.data.isAdmin) {
+                notifySuccess("Admin logged successfully!");
+            } else {
+                notifySuccess("User logged successfully!");
+            }
 
             localStorage.setItem(ACCESS_TOKEN, data.data.accessToken);
             localStorage.setItem(REFRESH_TOKEN, data.data.refreshToken);

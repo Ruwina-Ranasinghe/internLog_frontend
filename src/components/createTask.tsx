@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from "../interceptors/axiosInterceptor.ts";
+import {notifyError, notifyInfo, notifySuccess} from "../constants/notification.tsx";
 
 const CreateTaskForm = () => {
 
@@ -45,7 +46,7 @@ const CreateTaskForm = () => {
 
     const handleSubmit = async () => {
         const token = localStorage.getItem('accessToken');
-        if (!token) return alert('Please login first');
+        if (!token) return notifyInfo('Please login first');
 
         try {
             const formPayload = new FormData();
@@ -69,14 +70,14 @@ const CreateTaskForm = () => {
             );
 
             if (res.status !== 200) {
-                alert(res.data?.message || 'Failed to create task');
+                notifyError(res.data?.message || 'Failed to create task');
             } else {
-                alert('Task created successfully!');
+                notifySuccess('Task created successfully!');
                 navigate('/user/dashboard');
             }
         } catch (err:any) {
             console.error(err);
-            alert(err.response?.data?.message ||'Something went wrong. Please try again.');
+            notifyInfo(err.response?.data?.message ||'Something went wrong. Please try again.');
         }
     };
 

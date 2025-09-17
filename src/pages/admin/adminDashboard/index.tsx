@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import BarChartComponent from "../../../components/barGraph.tsx";
 import AdminAnalysisGraph from "../../../components/adminAnalysisGraph.tsx";
 import axiosInstance from "../../../interceptors/axiosInterceptor.ts";
+import {notifyInfo} from "../../../constants/notification.tsx";
 
 const AdminDashboard = () => {
     const [completionRate, setCompletionRate] = useState(0);
@@ -20,7 +21,7 @@ const AdminDashboard = () => {
     useEffect(() => {
         const fetchPriorityData = async () => {
             const token = localStorage.getItem("accessToken");
-            if (!token) return alert("Please login first");
+            if (!token) return notifyInfo("Please login first");
 
             try {
                 const res = await axiosInstance.get("/tasks/priority-counts", {
@@ -42,7 +43,7 @@ const AdminDashboard = () => {
 
         const fetchStatusData = async () => {
             const token = localStorage.getItem("accessToken");
-            if (!token) return alert("Please login first");
+            if (!token) return notifyInfo("Please login first");
 
             try {
                 const res = await axiosInstance.get("/tasks/all-users-status-counts", {
