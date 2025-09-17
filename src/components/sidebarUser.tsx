@@ -1,8 +1,8 @@
- import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { IconUserCircle, IconMenu2, IconX } from '@tabler/icons-react';
+import { IconUserCircle, IconMenu2, IconX, IconLayoutDashboard, IconPlus, IconList } from '@tabler/icons-react';
 
-const UserSidebar = () => {
+ const UserSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [active, setActive] = useState('/user/dashboard');
@@ -55,42 +55,48 @@ const UserSidebar = () => {
             w-64 p-4 flex flex-col justify-between
             transform transition-transform duration-300 ease-in-out z-40
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-          md:translate-x-0 md:left-0 md:right-auto md:z-10 
+          md:translate-x-0 md:left-0 md:right-auto md:z-10
         `}
-         style={{ backgroundColor: '#C89FE4', borderRight: '1px solid #830999', borderTop: '1px solid #830999', zIndex: 50  }}
+         style={{ backgroundColor: 'white', zIndex: 50, marginTop: '10px', borderTop:'1px solid #D6D6D6', borderRight:'1px solid #D6D6D6', borderRadius:'7px'  }}
       >
         {/* Navigation */}
-        <div className="flex flex-col gap-2 mt-4">
-          <button
-            className={`w-full text-left px-3 py-2 rounded ${
-              active === '/user/dashboard'
-                ? 'bg-purple-800 text-white'
-                : 'bg-purple-300 text-purple-900'
-            }`}
-            onClick={() => handleLinkClick('/user/dashboard')}
-          >
-            Dashboard
-          </button>
-          <button
-            className={`w-full text-left px-3 py-2 rounded ${
-              active === '/user/create-task'
-                ? 'bg-purple-800 text-white'
-                : 'bg-purple-300 text-purple-900'
-            }`}
-            onClick={() => handleLinkClick('/user/create-task')}
-          >
-            Add a Task
-          </button>
-          <button
-            className={`w-full text-left px-3 py-2 rounded ${
-              active === '/user/view-all-tasks'
-                ? 'bg-purple-800 text-white'
-                : 'bg-purple-300 text-purple-900'
-            }`}
-            onClick={() => handleLinkClick('/user/view-all-tasks')}
-          >
-            My Tasks
-          </button>
+        <div className="flex flex-col m-0 p-0 gap-2.5">
+            <button
+                className={`flex items-center gap-8 w-full text-left px-3 py-3.5 rounded transition-colors duration-200
+                  ${active === '/user/dashboard'
+                    ? 'bg-[#F4E5FF] text-purple-800'
+                    : 'bg-transparent text-black hover:bg-gray-100'
+                }`}
+                onClick={() => handleLinkClick('/user/dashboard')}
+            >
+                <IconLayoutDashboard size={22} className="shrink-0" />
+                Dashboard
+            </button>
+
+            <button
+                className={`flex items-center gap-8 w-full text-left px-3 py-3.5 rounded transition-colors duration-200
+                  ${active === '/user/create-task'
+                    ? 'bg-[#F4E5FF] text-purple-800'
+                    : 'bg-transparent text-black hover:bg-gray-100'
+                }`}
+                onClick={() => handleLinkClick('/user/create-task')}
+            >
+                <IconPlus size={22} className="shrink-0" />
+                Add a Task
+            </button>
+
+            <button
+                className={`flex items-center gap-8 w-full text-left px-3 py-3.5 rounded transition-colors duration-200
+                  ${active === '/user/view-all-tasks'
+                    ? 'bg-[#F4E5FF] text-purple-800'
+                    : 'bg-transparent text-black hover:bg-gray-100'
+                }`}
+                onClick={() => handleLinkClick('/user/view-all-tasks')}
+            >
+                <IconList size={22} className="shrink-0" />
+                My Tasks
+            </button>
+
         </div>
 
         {/* Bottom user profile */}

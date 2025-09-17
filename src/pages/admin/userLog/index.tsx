@@ -4,7 +4,7 @@ const UserLog = () => {
     return (
         <div>
             <div className="pb-7 text-2xl font-bold" style={{color: '#1f2937'}}>
-                All User
+                All Users
             </div>
             <UserCard/>
         </div>

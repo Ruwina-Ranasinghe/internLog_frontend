@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { IconUserCircle, IconMenu2, IconX } from '@tabler/icons-react';
+import { IconUserCircle, IconMenu2, IconX, IconLayoutDashboard, IconUsers} from '@tabler/icons-react';
 
 const SidebarAdmin = () => {
   const navigate = useNavigate();
@@ -56,29 +56,31 @@ const SidebarAdmin = () => {
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           md:translate-x-0 md:left-0 md:right-auto md:z-10 
         `}
-         style={{ backgroundColor: '#C89FE4', borderRight: '1px solid #830999', borderTop: '1px solid #830999', zIndex: 50  }}
+        style={{ backgroundColor: 'white', zIndex: 50, marginTop: '10px', borderTop:'1px solid #D6D6D6', borderRight:'1px solid #D6D6D6', borderRadius:'7px'  }}
       >
         {/* Navigation */}
-        <div className="flex flex-col gap-2 mt-4">
+        <div className="flex flex-col m-0 p-0 gap-2.5">
           <button
-            className={`w-full text-left px-3 py-2 rounded ${
+            className={`flex items-center gap-8 w-full text-left px-3 py-3.5 rounded transition-colors duration-200 ${
               active === '/admin/dashboard'
-                ? 'bg-purple-800 text-white'
-                : 'bg-purple-300 text-purple-900'
+                  ? 'bg-[#F4E5FF] text-purple-800'
+                  : 'bg-transparent text-black hover:bg-gray-100'
             }`}
             onClick={() => handleLinkClick('/admin/dashboard')}
           >
+              <IconLayoutDashboard size={22} className="shrink-0" />
             Dashboard
           </button>
           <button
-            className={`w-full text-left px-3 py-2 rounded ${
+            className={`flex items-center gap-8 w-full text-left px-3 py-3.5 rounded transition-colors duration-200 ${
               active === '/admin/user-log'
-                ? 'bg-purple-800 text-white'
-                : 'bg-purple-300 text-purple-900'
+                  ? 'bg-[#F4E5FF] text-purple-800'
+                  : 'bg-transparent text-black hover:bg-gray-100'
             }`}
             onClick={() => handleLinkClick('/admin/user-log')}
           >
-            All User
+              <IconUsers size={22} className="shrink-0" />
+            All Users
           </button>
         </div>
 
