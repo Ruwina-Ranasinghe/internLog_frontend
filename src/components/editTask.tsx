@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axiosInstance from "../interceptors/axiosInterceptor.ts";
+import {notifyError, notifyInfo, notifySuccess} from "../constants/notification.tsx";
 
 const EditTaskForm = () => {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ const EditTaskForm = () => {
 
   useEffect(() => {
     if (!task) {
-      alert("No task data provided!");
+        notifyInfo("No task data provided!");
       navigate('/user/view-all-tasks');
       return;
     }
@@ -77,7 +78,7 @@ const EditTaskForm = () => {
 
   const handleSaveChanges = async () => {
     if (!task?._id) {
-      alert("Task ID missing!");
+        notifyInfo("Task ID missing!");
       return;
     }
 
@@ -105,18 +106,18 @@ const EditTaskForm = () => {
           }
       );
 
-      alert("Task updated successfully!");
+      notifySuccess("Task updated successfully!");
       navigate("/user/view-all-tasks");
 
     } catch (err:any) {
       console.error(err);
-      alert(err.response?.data?.message || "Failed to update task");
+        notifyError(err.response?.data?.message || "Failed to update task");
     }
   };
 
   const handleDeleteTask = async () => {
     if (!task?._id) {
-      alert("Task ID missing!");
+        notifyInfo("Task ID missing!");
       return;
     }
 
@@ -125,11 +126,11 @@ const EditTaskForm = () => {
 
     try {
       await axiosInstance.delete(`/tasks/delete-task/${task._id}`);
-      alert("Task deleted successfully!");
+      notifySuccess("Task deleted successfully!");
       navigate("/user/view-all-tasks");
     } catch (err:any) {
       console.error(err);
-      alert(err.response?.data?.message || "Failed to delete task");
+        notifyError(err.response?.data?.message || "Failed to delete task");
     }
   };
 

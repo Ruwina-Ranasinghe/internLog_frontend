@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import TaskStatusChart from "../../../components/pieChart";
 import TaskStatusCards from "../../../components/taskStatusCard";
 import axiosInstance from "../../../interceptors/axiosInterceptor.ts";
+import {notifyInfo} from "../../../constants/notification.tsx";
 
 const UserDashboard = () => {
     const [counts, setCounts] = useState({ completed: 0, inProgress: 0, todo: 0 });
@@ -10,7 +11,7 @@ const UserDashboard = () => {
     useEffect(() => {
         const fetchTaskCounts = async () => {
             const token = localStorage.getItem("accessToken");
-            if (!token) return alert("Please login first");
+            if (!token) return notifyInfo("Please login first");
 
             try {
                 const res = await axiosInstance.get("/tasks/status-counts", {

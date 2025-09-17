@@ -17,6 +17,8 @@ import UserLayout from "./layouts/userLayout.tsx";
 import AdminLayout from "./layouts/adminLayout.tsx";
 import Home from "./pages/Home";
 import {checkAuthLoader} from "./utils/checkAuthLoader.tsx";
+import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 
 
 const router = createBrowserRouter([

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../interceptors/axiosInterceptor.ts";
+import {notifyError, notifyInfo} from "../constants/notification.tsx";
 
 interface Task {
     _id: string;
@@ -19,7 +20,7 @@ const TaskCard = () => {
     useEffect(() => {
         const fetchTasks = async () => {
             const token = localStorage.getItem("accessToken");
-            if (!token) return alert("Please login first");
+            if (!token) return notifyInfo("Please login first");
 
             try {
                 const res = await axiosInstance("/tasks/get-tasks", {
@@ -30,7 +31,7 @@ const TaskCard = () => {
                 setTasks(res.data);
             } catch (err:any) {
                 console.error(err);
-                alert(err.response?.data?.message ||"Something went wrong while fetching tasks.");
+                notifyError(err.response?.data?.message ||"Something went wrong while fetching tasks.");
             }
         };
 

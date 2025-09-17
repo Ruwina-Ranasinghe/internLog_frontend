@@ -3,6 +3,7 @@ import { useForm } from "@mantine/form";
 import logo from "../../../assets/logo1.png";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../../../interceptors/axiosInterceptor.ts";
+import {notifyError, notifySuccess} from "../../../constants/notification.tsx";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -50,14 +51,17 @@ const Register = () => {
                     isAdmin: values.role === "Admin",
                 });
 
-            if (values.role === "Admin") {alert("Admin registered successfully!");}
-            else {alert("User registered successfully!");}
+            if (values.role === "Admin") {
+                notifySuccess("Admin registered successfully!");
+            } else {
+                notifySuccess("User registered successfully!");
+            }
             
             navigate("/login");
 
         } catch (err) {
             console.error(err);
-            alert("Something went wrong. Please try again.");
+            notifyError("Something went wrong. Please try again.");
         }
     };
 
